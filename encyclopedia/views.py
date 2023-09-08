@@ -30,5 +30,21 @@ def entry(request, title):
     
 
 def search(request):
-    return
+    if request.method == "POST":
+        title_search =request.POST['q']
+        content = md_to_html(title_search)
+        if content:
+            return render(request, "encyclopedia/entry.html", {
+            "title": title_search,
+            "content": content
+        })
+        entries = util.list_entries()
+        search_result = []
+        for entry in entries:
+            if title_search.lower() in entry.lower():
+                search_result.append(entry)
+        return render(request, "encyclopedia/search.html", {
+            "search_result": search_result
+        })
+                
 
