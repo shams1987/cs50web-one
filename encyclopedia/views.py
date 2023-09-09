@@ -43,8 +43,32 @@ def search(request):
         for entry in entries:
             if title_search.lower() in entry.lower():
                 search_result.append(entry)
-        return render(request, "encyclopedia/search.html", {
+
+        if len(search_result) > 0:
+            return render(request, "encyclopedia/search.html", {
             "search_result": search_result
+            })
+        else:
+            return render(request, "encyclopedia/error.html", {
+            "message": "This entry does not exist"
         })
+
+def new_page(request):
+    if request.method == "GET":
+        return render(request, "encyclopedia/new.html")
+    if request.method == "POST":
+        title = request.POST['title']
+        content = request.POST['content'] 
+        if title in util.list_entries():
+            return render(request, "encyclopedia/error.html", {
+                "message": "Title and content already exists"
+            })
+        else:
+            util.save_entry(title, content)
+            new_content = md_to_html(title)
+            return render(request, "encyclopedia/entry.html", {
+                "title": title,
+                "content": new_content
+            })
                 
 
