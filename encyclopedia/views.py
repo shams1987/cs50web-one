@@ -71,4 +71,22 @@ def new_page(request):
                 "content": new_content
             })
                 
-
+def edit(request):
+    if request.method == "POST":
+        title = request.POST['title_entry']
+        content = util.get_entry(title)
+        return render(request, "encyclopedia/edit.html", {
+            "title": title,
+            "content": content
+        })
+    
+def save_edit(request):
+    if request.method == "POST":
+        title = request.POST['title']
+        content = request.POST['content']
+        util.save_entry(title, content) 
+        new_content = md_to_html(title)
+        return render(request, "encyclopedia/entry.html", {
+            "title": title,
+            "content": new_content
+        })
